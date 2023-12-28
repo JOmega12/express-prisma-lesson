@@ -1,0 +1,9 @@
+
+
+How to use the backend: 
+
+-install express => npm i express
+
+-then install nodemon for server => npm i nodemon
+
+- to start nodemon => npx nodemon **filename** app.js
