@@ -7,3 +7,28 @@ How to use the backend:
 -then install nodemon for server => npm i nodemon
 
 - to start nodemon => npx nodemon **filename** app.js
+
+
+
+To Make your js into devdependency typescript ==> npm i --save-dev typescript
+
+To make your typescript even tighter and install a tsconfig ==> npx tsc --init
+
+To point the node to the file we care about instead of having to compile it: 
+===> npm i --save-dev ts-node
+THEN: npx ts-node src/app.ts
+
+
+
+To add nodemon back to ts: 
+add a nodemon.json file then add  this :
+
+{
+   "watch" : ["src"],
+   "ext" : "ts",
+   "exec" : "ts-node ./src/app.ts"
+}
+
+then run ==>  npx nodemon
+
+
