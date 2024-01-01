@@ -32,3 +32,12 @@ add a nodemon.json file then add  this :
 then run ==>  npx nodemon
 
 
+
+TO PUT PRISMA INTO THE CODE:
+- Go to prisma docs and follow the quickstart guide
+- next on your schema.prisma, add your models. In this case, I put the model Character
+- then on terminal put npx prisma migrate dev
+   - this sets up the database and migration in dev.db
+-then you can go on sqlite3 prisma/dev.db
+
+

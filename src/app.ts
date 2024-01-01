@@ -1,5 +1,4 @@
-
-
+import { PrismaClient } from "@prisma/client";
 import express from "express";
 
 const app = express();
@@ -7,22 +6,7 @@ const app = express();
 app.use(express.json());
 
 
-let characters = [
-
-   {
-      id: 1,
-      name: "Rykardsss",
-   },
-   {
-      id: 2,
-      name: "Miquella",
-   },
-   {
-      id: 3,
-      name: "Milena",
-   },
-]
-
+const prisma = new PrismaClient();
 
 // http://localhost:3000
 // app.get('/', (req, res) => {
@@ -30,48 +14,66 @@ let characters = [
 // });
 
 //INDEX Endpoint
-app.get('/characters', (req, res) => {
+app.get('/characters', async(req, res) => {
+   // res.send(characters)
+   const characters = await prisma.character.findMany();
    res.send(characters)
 })
 
 //Show Endpoint
-app.get("/characters/:id", (req, res) => {
-   res.send(characters.find(char => char.id === +req.params.id))
+app.get("/characters/:id", async(req, res) => {
+   // res.send(characters.find(char => char.id === +req.params.id))
+
+   const id = +req.params.id
+   const character  = await prisma.character.findUnique({
+      where: {
+         id: id,
+      }
+   })
+
+   if(!character) {
+      return res.status(404).send("No Content")
+   }
+   res.send(character)
+
 })
 
-
 // DELETE ENDPOINT
-app.delete("/characters/:id", (req, res) => {
+app.delete("/characters/:id", async(req, res) => {
    const id = +req.params.id;
-   const originalCharacterLength = characters.length;
-   // this is the method that deletes character
-   characters = characters.filter((char) => char.id !== id);
-   // this checks if the actual character has been deleted
-   if(characters.length >= originalCharacterLength) {
-      return res.status(204).send('Noo Content :)')
+
+   const deleted = await Promise.resolve()
+   .then(() => prisma.character.delete({
+      where: {
+         id,
+      }
+   }))
+   .catch(() => null);
+   if(deleted === null){
+      res.status(404).send({error: "Character Not Found"})
    }
-   // if the outcome was expected, success
+   
    return res.status(200).send("Great Success")
 })
 
-// CREATE ENDPOINT / POST ENDPOINT
-app.post("/characters", (req, res) => {
-   // console.log('posting character');
-   // console.log({
-   //    body: req.body,
-   // });
-   characters.push(req.body);
-   res.status(201).send(req.body);
-   // res.send('yay!')
+// // CREATE ENDPOINT / POST ENDPOINT
+// app.post("/characters", (req, res) => {
+//    // console.log('posting character');
+//    // console.log({
+//    //    body: req.body,
+//    // });
+//    characters.push(req.body);
+//    res.status(201).send(req.body);
+//    // res.send('yay!')
 
-})
+// })
 
 
-app.patch("/characters/:id", (req, res) => {
-   const id= +req.params.id;
-   characters = characters.map(char => char.id === id ? { ...char, ...req.body } : char)
-   res.status(201).send(characters.find(char => char.id));
-})
+// app.patch("/characters/:id", (req, res) => {
+//    const id= +req.params.id;
+//    characters = characters.map(char => char.id === id ? { ...char, ...req.body } : char)
+//    res.status(201).send(characters.find(char => char.id));
+// })
 
 
 app.listen(3000);
